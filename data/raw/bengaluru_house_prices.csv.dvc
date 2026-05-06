@@ -1,0 +1,5 @@
+outs:
+- md5: 707d42de7861d99312ccdbff640fe408
+  size: 924700
+  hash: md5
+  path: bengaluru_house_prices.csv
