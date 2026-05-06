@@ -1,0 +1,14 @@
+stages:
+  preprocess:
+    cmd: python src/pipelines/preprocess_pipeline.py
+    deps:
+    - data/raw/bengaluru_house_prices.csv
+    - src/pipelines/preprocess_pipeline.py
+    outs:
+    - data/processed/new_data.csv
+    - data/processed/train_data.csv
+  train:
+    cmd: python src/pipelines/train_pipeline.py
+    deps:
+    - data/processed/train_data.csv
+    - src/pipelines/train_pipeline.py

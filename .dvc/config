@@ -1,4 +1,5 @@
 [core]
     remote = origin
+    site_cache_dir = .dvc/site_cache
 ['remote "origin"']
     url = https://dagshub.com/AkshitMunjal/house-price-mlops.dvc

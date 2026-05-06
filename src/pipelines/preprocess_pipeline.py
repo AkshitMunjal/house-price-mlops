@@ -1,0 +1,24 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+from src.data.load_data import load_raw_data
+from src.features.preprocess import preprocess_data
+from src.features.build_features import build_features
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+raw_data_path = BASE_DIR / 'data' / 'raw' / 'bengaluru_house_prices.csv'
+
+df = load_raw_data(raw_data_path, source_type='csv')
+df_preprocessed = preprocess_data(df)
+df_features = build_features(df_preprocessed)
+
+train_data = df_features.sample(frac=0.8, random_state=42)
+test_data = df_features.drop(train_data.index)
+
+processed_dir = BASE_DIR / 'data' / 'processed'
+
+train_data.to_csv(processed_dir / 'train_data.csv', index=False)
+test_data.to_csv(processed_dir / 'new_data.csv', index=False)
+
+print("Preprocessing Pipeline Completed")
