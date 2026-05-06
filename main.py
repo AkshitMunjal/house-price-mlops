@@ -29,4 +29,5 @@ model, run_id = run_training_pipeline(X_train, X_test, y_train, y_test)
 
 print(f"Best model: {model}")
 print(f"Training completed. MLflow Run ID: {run_id}")
+
 # python main.py
