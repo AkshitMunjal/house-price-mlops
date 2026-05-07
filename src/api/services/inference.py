@@ -1,9 +1,9 @@
 import sys
-import numpy as np
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[3]))
 
 import pandas as pd
+import numpy as np
 from src.api.utils.model_loader import ModelLoader
 from src.features.build_features import (
     transform_total_sqft,
