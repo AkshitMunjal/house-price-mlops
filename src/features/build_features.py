@@ -6,7 +6,8 @@ def convert_total_sqft_to_numeric(x):
     Convert the 'total_sqft' column to numeric values. 
     If the value is a range (e.g., '2100 - 2850'), it will take the average of the two numbers.
     If the value cannot be converted to a number, it will return NaN.
-
+    If the value is already a number, it will return the numeric value.
+    
     Parameters:
         x (str): The input value from the 'total_sqft' column.
 

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bengaluru House Price Prediction</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .title h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .title p {
+      color: #666;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .predict-btn {
+      margin-top: 30px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      background: black;
+      color: white;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .predict-btn:hover {
+      background: #333;
+    }
+
+    .result-box {
+      margin-top: 30px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .result-box h2 {
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .result {
+      font-size: 36px;
+      font-weight: bold;
+      color: black;
+    }
+
+    .loading {
+      color: #666;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="title">
+      <h1>Bengaluru House Price Prediction</h1>
+      <p>Predict house prices using your ML model API</p>
+    </div>
+
+    <form id="predictionForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Area Type</label>
+          <select id="area_type">
+            <option>Super built-up  Area</option>
+            <option>Built-up  Area</option>
+            <option>Plot  Area</option>
+            <option>Carpet  Area</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Availability</label>
+          <select id="availability">
+            <option>Ready To Move</option>
+            <option>Immediate Possession</option>
+            <option>Under Construction</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="location" placeholder="Electronic City Phase II" required />
+        </div>
+
+        <div class="form-group">
+          <label>Size</label>
+          <input type="text" id="size" placeholder="2 BHK" required />
+        </div>
+
+        <div class="form-group">
+          <label>Total Sqft</label>
+          <input type="text" id="total_sqft" placeholder="1500-1700" required />
+        </div>
+
+        <div class="form-group">
+          <label>Bathrooms</label>
+          <input type="number" id="bath" placeholder="2" required />
+        </div>
+
+        <div class="form-group">
+          <label>Balcony</label>
+          <input type="number" id="balcony" placeholder="1" required />
+        </div>
+
+      </div>
+
+      <button type="submit" class="predict-btn">
+        Predict Price
+      </button>
+
+    </form>
+
+    <div class="result-box">
+      <h2>Predicted Price</h2>
+      <div id="result" class="result">
+        ₹ -- Lakhs
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    const form = document.getElementById("predictionForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      resultDiv.innerHTML = '<span class="loading">Predicting...</span>';
+
+      const data = {
+        area_type: document.getElementById("area_type").value,
+        availability: document.getElementById("availability").value,
+        location: document.getElementById("location").value,
+        size: document.getElementById("size").value,
+        total_sqft: document.getElementById("total_sqft").value,
+        bath: parseFloat(document.getElementById("bath").value),
+        balcony: parseFloat(document.getElementById("balcony").value)
+      };
+
+      try {
+
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        resultDiv.innerHTML = `₹ ${result.predicted_price_lakhs.toFixed(2)} Lakhs`;
+
+      } catch (error) {
+
+        console.error(error);
+
+        resultDiv.innerHTML = "Error while predicting price";
+      }
+    });
+
+  </script>
+
+</body>
+</html>
