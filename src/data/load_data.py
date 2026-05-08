@@ -1,12 +1,10 @@
 from .csv_loader import CSVDataHandler
+from .s3_loader import S3DataHandler
 import pandas as pd
 
 HANDLERS = {
     'csv': CSVDataHandler(),
-    # Future handlers can be added here (e.g., 'parquet': ParquetDataHandler())
-    # 'json': JSONDataHandler(),
-    # "s3": S3DataHandler(),
-    # "sql": SQLDataHandler()
+    "s3": S3DataHandler()
 }
 
 def load_raw_data(source: str, source_type: str = 'csv') -> pd.DataFrame:

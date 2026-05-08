@@ -5,12 +5,12 @@ stages:
     deps:
     - path: data/raw/bengaluru_house_prices.csv
       hash: md5
-      md5: 707d42de7861d99312ccdbff640fe408
-      size: 924700
+      md5: 0813deb49c02cb97f4caeec0ce5acc7f
+      size: 938022
     - path: src/pipelines/preprocess_pipeline.py
       hash: md5
-      md5: aa4f2fd9f129db01ccec603b56e8dc48
-      size: 855
+      md5: ea540b4c10cdaf2441be35d191adf649
+      size: 932
     outs:
     - path: data/processed/new_data.csv
       hash: md5
@@ -31,3 +31,23 @@ stages:
       hash: md5
       md5: 4923ccbc4c8f16a9179152a7b362838c
       size: 731
+  download_data:
+    cmd: python src/pipelines/download_data_pipeline.py
+    deps:
+    - path: src/data/load_data.py
+      hash: md5
+      md5: 2f08648e0b43e8cd9044fe9ad74eb6e5
+      size: 971
+    - path: src/data/s3_loader.py
+      hash: md5
+      md5: 26884423bd6ab26a72dcf2f1ffb70ab4
+      size: 3187
+    - path: src/pipelines/download_data_pipeline.py
+      hash: md5
+      md5: 005472157a54e0808e01eaf2a2820cf8
+      size: 500
+    outs:
+    - path: data/raw/bengaluru_house_prices.csv
+      hash: md5
+      md5: 0813deb49c02cb97f4caeec0ce5acc7f
+      size: 938022
