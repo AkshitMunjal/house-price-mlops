@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).resolve().parents[3]))
 import pandas as pd
 import numpy as np
 from src.api.utils.model_loader import ModelLoader
+from src.api.utils.s3_logger import upload_prediction_log
 from src.features.build_features import (
     transform_total_sqft,
     transform_size_column
@@ -119,6 +120,12 @@ class PredictionService:
 
         # reverse the log tranformation to get the actual price in lakhs
         predicted_price = np.exp(predicted_price)
+
+        # upload prediction log to S3 using the upload_prediction_log function from s3_logger.py
+        upload_prediction_log(
+            input_data=input_data,
+            prediction=float(predicted_price)
+        )
 
         return predicted_price
     
