@@ -26,12 +26,26 @@ s3_client = boto3.client(
 )
 
 
-def upload_prediction_log(input_data, prediction):
+def upload_prediction_log(input_data, prediction,monitoring_flags):
+
+    """
+    Upload a prediction log to S3. This function takes the input data, the predicted price, 
+    and the monitoring flags, and uploads them as a JSON file to an S3 bucket.
+
+    Stores:
+        - timestamp: The time when the prediction was made
+        - input: The raw input data that was used for the prediction
+        - prediction: The predicted price in lakhs
+        - monitoring_flags: The flags generated for monitoring based on the input data
+
+    """
+
 
     log_data = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "input": input_data,
-        "prediction": prediction
+        "prediction": prediction,
+        "monitoring_flags": monitoring_flags
     }
 
     file_name = f"prediction_logs/{uuid.uuid4()}.json"

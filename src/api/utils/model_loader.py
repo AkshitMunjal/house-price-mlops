@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 import dagshub
 import mlflow
 import mlflow.xgboost
-
+import joblib
+from mlflow.artifacts import download_artifacts
 
 # load environment variables
 load_dotenv()
@@ -15,6 +16,9 @@ class ModelLoader:
 
     # cache loaded model
     _model = None
+
+    # cache known locations
+    _known_locations = None
 
     # prevent repeated dagshub initialization
     _dagshub_initialized = False
@@ -57,6 +61,30 @@ class ModelLoader:
         )
 
         return cls._model
+
+    
+    @classmethod
+    def load_known_locations(cls):
+        
+        # return cached known locations if already loaded
+        if cls._known_locations is not None:
+            return cls._known_locations
+
+        # initialize dagshub
+        cls._init_dagshub()
+
+        # download artifacts locally
+        artifact_path = download_artifacts(
+            artifact_uri="models:/HousePriceModel@production/"
+            "known_locations/known_locations.joblib"
+        )
+        
+
+        # load known locations list from disk
+        cls._known_locations = joblib.load(artifact_path)
+
+        return cls._known_locations
+
 
 
 if __name__ == "__main__":

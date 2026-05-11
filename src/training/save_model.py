@@ -1,4 +1,6 @@
 import mlflow
+import os
+import joblib
 
 # def save_model(model,feature_columns,save_dir="artifacts") -> None:
 
@@ -42,3 +44,42 @@ def log_feature_columns() -> None:
 
     mlflow.log_artifact('artifacts/feature_columns.joblib', artifact_path='feature_columns')
     print("Feature columns logged to MLflow")
+
+def save_known_locations(known_locations:list,save_dir="artifacts") -> None:
+
+    """
+    Saves the known locations list to disk.
+
+    Parameters:
+        - known_locations(list): List of known locations to be saved.
+        - save_dir: Directory where the known locations will be saved (default: "artifacts").
+
+    Returns:
+        - None
+    
+    """
+
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    
+    locations_path = os.path.join(save_dir, 'known_locations.joblib')    
+
+    joblib.dump(known_locations, locations_path)
+    
+    print(f"Known locations saved to {locations_path}")
+
+
+def log_known_locations() -> None:
+
+    """
+    Logs the known locations list to MLflow from the artifacts folder.
+
+    Parameters:
+        - None
+    
+    Returns:
+        - None
+    """
+
+    mlflow.log_artifact('artifacts/known_locations.joblib', artifact_path='known_locations')
+    print("Known locations logged to MLflow")

@@ -14,6 +14,7 @@ from src.training.preprocessing import (
     encode_categorical_features,
     select_features
 )
+from src.api.utils.monitoring import generate_monitoring_flags
 
 
 class PredictionService:
@@ -57,15 +58,55 @@ class PredictionService:
         df = transform_total_sqft(df)
         df = transform_size_column(df)
 
+        # handle rare locations via mlflow artifacts
+        known_locations = (
+            ModelLoader.load_known_locations()
+        )
+
+        # convert unseen location into "Other" to match training data distribution
+        if (df.loc[0,'location'] not in known_locations):
+            df.loc[0,'location'] = 'Other'
+
         # encode categorical features using the function from preprocessing.py
         df = encode_categorical_features(df)
         
         # we have to include this because select_features() function is 
         # expecting this column to drop it otherwise it will throw an error
         df['sqft_per_bhk'] = df['new_total_sqft'] / df['new_size']
+        
+
+        # IMPORTANT:
+        # we are NOT dropping features here anymore using select_features() function from preprocessing.py
+        # because monitoring needs access to engineered features
+        # like sqft_per_bhk, new_size, bath, etc.
+        # feature selection will happen later
+        # inside prepare_model_features()
 
         # select only the features that are used for prediction using the function from preprocessing.py
-        df = select_features(df)
+        # df = select_features(df)
+        
+        # this gives us full engineered dataframe with all features, 
+        # including engineered features like sqft_per_bhk, new_size, bath, etc.
+        # which were getting dropped before in select_features() function
+        # we need these features for monitoring and explainability purposes
+        return df
+
+    @staticmethod
+    def prepare_model_features(input_data: pd.DataFrame) -> pd.DataFrame:
+
+
+        """
+        Prepare the input data with only the features that the model was trained on.
+        This is necessary because the model was trained on a specific set of features, and we need to ensure that the input data has the same features in the same order before making a prediction.
+        Parameters:
+            input_data (pd.DataFrame): The preprocessed input data.
+        Returns:
+            pd.DataFrame: The input data with only the features that the model was trained on, ready for prediction.
+
+        """
+
+        # drop unnecessary features that are not used for prediction
+        df = select_features(input_data)
 
         return df
 
@@ -112,8 +153,14 @@ class PredictionService:
         # preprocess the input data using the preprocess_input method
         preprocessed_data = PredictionService.preprocess_input(input_data)
 
+        # generate monitoring flags based on the preprocessed data
+        monitoring_flags = generate_monitoring_flags(preprocessed_data)
+
+        # prepare the preprocessed data with only the features that the model was trained on using the prepare_model_features method
+        model_ready_data = PredictionService.prepare_model_features(preprocessed_data)
+
         # align the preprocessed data with the model's expected features using the alignfeatures method
-        aligned_data = PredictionService.alignfeatures(preprocessed_data, model)
+        aligned_data = PredictionService.alignfeatures(model_ready_data, model)
 
         # make a prediction using the model's predict method and return the predicted price
         predicted_price = model.predict(aligned_data)[0]
@@ -124,9 +171,11 @@ class PredictionService:
         # upload prediction log to S3 using the upload_prediction_log function from s3_logger.py
         upload_prediction_log(
             input_data=input_data,
-            prediction=float(predicted_price)
+            prediction=float(predicted_price),
+            monitoring_flags=monitoring_flags
         )
 
+        
         return predicted_price
     
 if __name__ == "__main__":

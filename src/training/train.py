@@ -6,7 +6,10 @@ from typing import Tuple
 from xgboost import XGBRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error,r2_score
-from src.training.save_model import log_feature_columns
+from src.training.save_model import (log_feature_columns,
+                                     save_known_locations,
+                                     log_known_locations
+                                    )
 
 
 # dagshub integration
@@ -61,6 +64,27 @@ def run_training_pipeline(X_train, X_test, y_train, y_test) -> Tuple[XGBRegresso
         grid.fit(X_train, y_train)
 
         best_model = grid.best_estimator_
+ 
+        # extract all valid training locations
+        # from one-hot encoded location features
+        known_locations = []
+
+        for col in X_train.columns:
+
+            # all encoded columns start with location_
+            if col.startswith('location_'):
+
+                # remove prefix to get the actual location name
+                # example: location_Electronic City Phase II -> Electronic City Phase II
+                location_name = col.replace('location_', '')
+
+                known_locations.append(location_name)
+
+        # save the known locations list to disk using the save_known_locations function from save_model.py
+        save_known_locations(known_locations)
+
+        # log the known locations list to mlflow using the log_known_locations function from save_model.py
+        log_known_locations()
 
         y_pred = best_model.predict(X_test)
         
