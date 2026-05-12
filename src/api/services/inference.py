@@ -67,6 +67,9 @@ class PredictionService:
         if (df.loc[0,'location'] not in known_locations):
             df.loc[0,'location'] = 'Other'
 
+        # preserve original location column for monitoring
+        df['original_location'] = df['location']
+        
         # encode categorical features using the function from preprocessing.py
         df = encode_categorical_features(df)
         

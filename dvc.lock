@@ -31,6 +31,14 @@ stages:
       hash: md5
       md5: 4923ccbc4c8f16a9179152a7b362838c
       size: 731
+    - path: src/training/preprocessing.py
+      hash: md5
+      md5: 465cb235bc70009e52502028db7aeca5
+      size: 2785
+    - path: src/training/train.py
+      hash: md5
+      md5: cc42097e28f9c2dce0f01ca03ad07d99
+      size: 3643
   download_data:
     cmd: python src/pipelines/download_data_pipeline.py
     deps:

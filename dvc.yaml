@@ -35,3 +35,5 @@ stages:
     deps:
       - data/processed/train_data.csv
       - src/pipelines/train_pipeline.py
+      - src/training/preprocessing.py
+      - src/training/train.py

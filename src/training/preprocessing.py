@@ -20,7 +20,7 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(columns=['area_type'])
 
     # location encoding
-    location_dummies = pd.get_dummies(df['location'], drop_first=True)
+    location_dummies = pd.get_dummies(df['location'], prefix='location', drop_first=True)
     df = pd.concat([df, location_dummies], axis=1)
     df = df.drop(columns=['location'])
 

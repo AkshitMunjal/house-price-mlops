@@ -32,7 +32,7 @@ def generate_monitoring_flags(df: pd.DataFrame) -> dict:
             'high_bath_count': bool(row['bath'] > HIGH_BATH_COUNT),
             'high_total_sqft': bool(row['new_total_sqft'] > HIGH_TOTAL_SQFT),
             'low_total_sqft': bool(row['new_total_sqft'] < LOW_TOTAL_SQFT),
-            'unseen_location': bool(row['location'] == 'Other')
+            'unseen_location': bool(row['original_location'] == 'Other')
 
         }
 

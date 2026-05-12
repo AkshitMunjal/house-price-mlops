@@ -73,19 +73,27 @@ class ModelLoader:
         # initialize dagshub
         cls._init_dagshub()
 
-        # download artifacts locally
-        artifact_path = download_artifacts(
-            artifact_uri="models:/HousePriceModel@production/"
-            "known_locations/known_locations.joblib"
-        )
-        
+        # create a mlflow client
+        client = mlflow.tracking.MlflowClient()
 
-        # load known locations list from disk
+        # get the latest production model version details
+        model_version = client.get_model_version_by_alias(
+            name='HousePriceModel',
+            alias='production'
+        )
+
+        # extract source run id
+        run_id = model_version.run_id
+
+        # download the known_locations artifact from 
+        artifact_path = download_artifacts(
+            artifact_uri=f"runs:/{run_id}/known_locations/known_locations.joblib"
+        )
+
+        # load the known locations from the downloaded artifact
         cls._known_locations = joblib.load(artifact_path)
 
         return cls._known_locations
-
-
 
 if __name__ == "__main__":
 
