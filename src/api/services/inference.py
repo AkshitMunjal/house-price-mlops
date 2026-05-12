@@ -15,7 +15,7 @@ from src.training.preprocessing import (
     select_features
 )
 from src.api.utils.monitoring import generate_monitoring_flags
-
+import time
 
 class PredictionService:
     
@@ -153,6 +153,9 @@ class PredictionService:
         # load the model using the ModelLoader class
         model = ModelLoader.load_model()
 
+        # start time for monitoring latency
+        start_time = time.time()
+
         # preprocess the input data using the preprocess_input method
         preprocessed_data = PredictionService.preprocess_input(input_data)
 
@@ -171,11 +174,20 @@ class PredictionService:
         # reverse the log tranformation to get the actual price in lakhs
         predicted_price = np.exp(predicted_price)
 
+        # end time for monitoring latency
+        end_time = time.time()
+
+        # calculate latency in milliseconds
+        inference_latency_ms = (end_time - start_time) * 1000
+
+        print(f"Inference latency: {inference_latency_ms:.2f} ms")
+
         # upload prediction log to S3 using the upload_prediction_log function from s3_logger.py
         upload_prediction_log(
             input_data=input_data,
             prediction=float(predicted_price),
-            monitoring_flags=monitoring_flags
+            monitoring_flags=monitoring_flags,
+            inference_latency_ms=inference_latency_ms
         )
 
         

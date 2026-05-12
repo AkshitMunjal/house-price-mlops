@@ -26,7 +26,7 @@ s3_client = boto3.client(
 )
 
 
-def upload_prediction_log(input_data, prediction,monitoring_flags):
+def upload_prediction_log(input_data, prediction,monitoring_flags,inference_latency_ms):
 
     """
     Upload a prediction log to S3. This function takes the input data, the predicted price, 
@@ -37,6 +37,7 @@ def upload_prediction_log(input_data, prediction,monitoring_flags):
         - input: The raw input data that was used for the prediction
         - prediction: The predicted price in lakhs
         - monitoring_flags: The flags generated for monitoring based on the input data
+        - inference_latency_ms: The latency of the inference in milliseconds
 
     """
 
@@ -45,7 +46,8 @@ def upload_prediction_log(input_data, prediction,monitoring_flags):
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "input": input_data,
         "prediction": prediction,
-        "monitoring_flags": monitoring_flags
+        "monitoring_flags": monitoring_flags,
+        "inference_latency_ms": inference_latency_ms
     }
 
     file_name = f"prediction_logs/{uuid.uuid4()}.json"
