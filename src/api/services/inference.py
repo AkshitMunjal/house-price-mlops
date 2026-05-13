@@ -14,8 +14,15 @@ from src.training.preprocessing import (
     encode_categorical_features,
     select_features
 )
-from src.api.utils.monitoring import generate_monitoring_flags
+from src.api.utils.monitoring import (
+                        generate_monitoring_flags,
+                        PREDICTION_REQUEST_COUNT,
+                        PREDICTION_LATENCY
+                    )
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PredictionService:
     
@@ -65,6 +72,7 @@ class PredictionService:
 
         # convert unseen location into "Other" to match training data distribution
         if (df.loc[0,'location'] not in known_locations):
+            logger.warning(f"Unseen location: {df.loc[0,'location']}. Converting to 'Other'.")
             df.loc[0,'location'] = 'Other'
 
         # preserve original location column for monitoring
@@ -149,6 +157,8 @@ class PredictionService:
         Returns:
             float: The predicted price in lakhs.
         """
+        
+        logger.info("Starting prediction pipeline")
 
         # load the model using the ModelLoader class
         model = ModelLoader.load_model()
@@ -180,7 +190,16 @@ class PredictionService:
         # calculate latency in milliseconds
         inference_latency_ms = (end_time - start_time) * 1000
 
-        print(f"Inference latency: {inference_latency_ms:.2f} ms")
+        logger.info(f"Inference latency: {inference_latency_ms:.2f} ms")
+
+        # convert latency from milliseconds to seconds for Prometheus histogram
+        inference_latency_seconds = inference_latency_ms / 1000
+
+        # record latency inside the Prometheus histogram
+        PREDICTION_LATENCY.observe(inference_latency_seconds)
+
+        # increase prediction count by 1
+        PREDICTION_REQUEST_COUNT.inc()
 
         # upload prediction log to S3 using the upload_prediction_log function from s3_logger.py
         upload_prediction_log(
@@ -190,7 +209,7 @@ class PredictionService:
             inference_latency_ms=inference_latency_ms
         )
 
-        
+        logger.info(f"Prediction completed. Predicted price: {predicted_price:.2f}")
         return predicted_price
     
 if __name__ == "__main__":
@@ -198,7 +217,7 @@ if __name__ == "__main__":
     input_data = {
         "area_type": "Super built-up  Area",
         "availability": "Ready To Move",
-        "location": "Electronic City Phase II",
+        "location": "Mars",
         "size": "1 BHK",
         "total_sqft": "1500-1700",
         "bath": 2,

@@ -10,12 +10,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import time
 from fastapi import Request
+from prometheus_fastapi_instrumentator import Instrumentator
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="ML API",
     description="API for machine learning predictions",
     version="1.0.0",
 )
+
+Instrumentator().instrument(app).expose(app)
 
 @app.middleware("http")
 async def log_request_latency(request: Request, call_next):
@@ -32,7 +41,7 @@ async def log_request_latency(request: Request, call_next):
     # calculate the latency in miliseconds
     latency = (end_time - start_time) * 1000
 
-    print(
+    logger.info(
         f"Request: {request.method} {request.url.path} - Latency: {latency:.2f} ms"
     )
 

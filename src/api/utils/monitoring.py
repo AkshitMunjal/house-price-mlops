@@ -1,4 +1,5 @@
 import pandas as pd
+from prometheus_client import Counter,Histogram
 
 # monitoring thresholds as per the features/build_features.py file
 HIGH_SQFT_PER_BHK = 1500
@@ -6,6 +7,17 @@ LOW_SQFT_PER_BHK = 350
 HIGH_BATH_COUNT = 7
 HIGH_TOTAL_SQFT = 6000
 LOW_TOTAL_SQFT = 400
+
+PREDICTION_REQUEST_COUNT = Counter(
+    "prediction_requests_total",
+    "Total number of prediction requests"
+)
+
+PREDICTION_LATENCY = Histogram(
+    "prediction_latency_seconds",
+    "Histogram of prediction inference latency"
+)
+
 
 def generate_monitoring_flags(df: pd.DataFrame) -> dict:
 
