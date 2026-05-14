@@ -26,5 +26,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest -v
+        run:  pytest -v
+
+      - name: Build Docker image
+        run:  docker build -t house-price-app:latest .
           
