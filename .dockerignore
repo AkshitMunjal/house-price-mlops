@@ -15,15 +15,14 @@ artifacts/
 .dvc/
 .git/
 
-src/pipelines/
-src/data/
+!data/processed/
+!data/processed/train_data.csv
+!data/processed/new_data.csv
+
 
 src/features/preprocess.py
 src/features/feature_config.py
 
-src/training/save_model.py
-src/training/split.py
-src/training/train.py
 
 main.py
 README.md

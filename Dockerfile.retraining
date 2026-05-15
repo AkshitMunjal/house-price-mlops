@@ -1,0 +1,23 @@
+# lightweight python image
+FROM python:3.11-slim
+
+# set working directory
+WORKDIR /app
+
+# copy requirements
+COPY requirements.txt .
+
+# install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copy entire src folder
+COPY src ./src
+
+# copy processed datasets
+COPY data ./data
+
+# copy root package init
+COPY src/__init__.py ./src/__init__.py
+
+# default command
+CMD ["python", "src/pipelines/retrain_pipeline.py"]
