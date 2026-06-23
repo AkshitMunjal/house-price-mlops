@@ -66,46 +66,6 @@ This project goes well beyond a Kaggle-style notebook. It simulates what a real 
 
 <img width="2816" height="1536" alt="ml_project_system_architecture" src="https://github.com/user-attachments/assets/cd43d10c-a6cd-49a0-bfe1-1ef555d726d3" />
 
-```
-                        ┌─────────────────────────────────┐
-                        │           Developer              │
-                        │       Pushes Code to GitHub      │
-                        └────────────┬────────────────────┘
-                                     │
-                                     ▼
-                        ┌─────────────────────────────────┐
-                        │      GitHub Actions (CI/CD)      │
-                        │  Tests → Build → Push → Deploy   │
-                        └────────────┬────────────────────┘
-                                     │
-                    ┌────────────────┴──────────────────┐
-                    │                                   │
-                    ▼                                   ▼
-        ┌───────────────────┐               ┌─────────────────────┐
-        │   DockerHub        │               │  MLflow + DagsHub   │
-        │  (Image Registry)  │               │  (Model Registry)   │
-        └─────────┬─────────┘               └──────────┬──────────┘
-                  │                                     │
-                  ▼                                     │
-        ┌─────────────────────────────────────────────┐│
-        │              AWS EC2 Instance               ││
-        │                                             ││
-        │  ┌──────────────────┐  ┌─────────────────┐  ││
-        │  │ Inference         │  │ Retraining      │◄─┘│
-        │  │ Container         │  │ Container       │   │
-        │  │ (FastAPI API)     │  │ (cron-triggered)│   │
-        │  └────────┬─────────┘  └────────┬────────┘   │
-        │           │                     │             │
-        └───────────┼─────────────────────┼─────────────┘
-                    │                     │
-                    ▼                     ▼
-             ┌────────────┐        ┌────────────────┐
-             │  AWS S3     │        │ MLflow Registry │
-             │ (Prediction │        │ (@production    │
-             │  Logging)   │        │  alias)         │
-             └────────────┘        └────────────────┘
-```
-
 ---
 
 ## 📁 Project Structure
