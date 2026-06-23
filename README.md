@@ -510,15 +510,7 @@ This project required solving real production ML challenges beyond model accurac
 
 This project demonstrates what production ML engineering actually looks like:
 
-```
-S3 Data Ingestion → DVC Pipeline → Feature Engineering → Experiment Tracking
-                                          ↓
-                    Model Training → Evaluation → Registry → Deployment
-                                          ↓
-              Prometheus/Grafana → Prediction Logging → Drift Monitoring → Conditional Retraining
-                                          ↓
-                         CI/CD → Containerized → Cloud-Deployed → Observable
-```
+<img width="2816" height="1536" alt="global_architecture" src="https://github.com/user-attachments/assets/2f723e87-d362-43b2-887c-647828e1b16c" />
 
 The focus was building a system that is **reliable, maintainable, and production-ready** — not just maximizing a benchmark metric on a notebook.
 
