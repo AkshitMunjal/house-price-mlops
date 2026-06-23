@@ -64,6 +64,8 @@ This project goes well beyond a Kaggle-style notebook. It simulates what a real 
 
 ## 🏗️ System Architecture
 
+<img width="2816" height="1536" alt="ml_project_system_architecture" src="https://github.com/user-attachments/assets/cd43d10c-a6cd-49a0-bfe1-1ef555d726d3" />
+
 ```
                         ┌─────────────────────────────────┐
                         │           Developer              │
